@@ -1,1 +1,442 @@
-# energipak
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energipak 3840 | Interactive Product Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #d97706;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals & Solar Amber. Background: Stone-50 (#fafaf9). Accents: Amber-600, Stone-800. Designed to convey reliability, earthiness, and energy. -->
+    <!-- Application Structure Plan: The app is designed as a vertical storytelling scroll with interactive 'stations'. 1. Hero: Immediate value prop. 2. Battery Tech (Data): Comparative chart for the 4000 cycles claim. 3. Control (Interaction): A simulator for the 300-1500W knob to explain the user benefit. 4. Utility (Grid): Visualizing the 10+ outputs and UPS function. 5. Ecosystem (Context): Solar integration scenarios. This structure moves from 'Core Tech' to 'User Control' to 'Real World Application', mimicking the buyer's cognitive journey. -->
+    <!-- Visualization & Content Choices: 1. Bar Chart (Chart.js): To vividly demonstrate the massive difference between 4000 cycles (EVE LFP) and standard batteries. 2. Input Slider (HTML/JS): To verify the 'Flexible Input' claim, allowing users to 'feel' the control between speed and lifespan. 3. Scenario Cards (JS Grid): To organize the diverse use cases (Camping, Rescue, Home) without clutter. 4. Unicode Icons: Used instead of SVG to maintain single-file constraint while providing visual cues. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-stone-800 selection:bg-amber-200">
+
+    <nav class="sticky top-0 z-50 glass-panel shadow-sm border-b border-stone-200">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-tight text-stone-900">Energipak <span class="text-amber-600">3840</span></div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-stone-600">
+                <a href="#core-tech" class="hover:text-amber-600 transition-colors">Core Technology</a>
+                <a href="#smart-control" class="hover:text-amber-600 transition-colors">Smart Charging</a>
+                <a href="#ups-power" class="hover:text-amber-600 transition-colors">UPS & Outputs</a>
+                <a href="#scenarios" class="hover:text-amber-600 transition-colors">Use Cases</a>
+            </div>
+            <button onclick="scrollToTop()" class="md:hidden text-2xl">≡</button>
+        </div>
+    </nav>
+
+    <header class="relative pt-20 pb-24 px-4 bg-white overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-amber-100 text-amber-800 text-xs font-bold tracking-wide mb-6 uppercase">Next-Gen Energy Storage System</span>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-stone-900 mb-6 leading-tight">
+                Safe & Efficient <br>Mobile Power Hub
+            </h1>
+            <p class="text-xl text-stone-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Powered by the new EVE LiFePO4 battery, offering over 10 years of reliable power assurance. It is the ultimate lithium battery solution for off-grid living, emergency rescue, and home backup.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button onclick="document.getElementById('core-tech').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-stone-900 text-white font-semibold rounded-lg hover:bg-stone-700 transition shadow-lg">Explore Core Technology</button>
+            </div>
+        </div>
+        <div class="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none" style="background: radial-gradient(circle at 50% 0%, #fcd34d 0%, transparent 60%);"></div>
+    </header>
+
+    <main class="space-y-24 pb-24">
+
+        <section id="core-tech" class="px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                            <h3 class="text-lg font-bold mb-4 text-center">Cycle Life Comparison Analysis</h3>
+                            <div class="chart-container">
+                                <canvas id="batteryChart"></canvas>
+                            </div>
+                            <p class="text-xs text-center text-stone-400 mt-4">*Estimated based on one charge/discharge cycle per day</p>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2 space-y-6">
+                        <h2 class="text-3xl font-bold text-stone-900">EVE LFP Battery Core</h2>
+                        <p class="text-stone-600 leading-relaxed">
+                            This section showcases the heart of the Energipak 3840—the new <strong>EVE LiFePO4 (Lithium Iron Phosphate)</strong> battery. Compared to conventional batteries, this represents not just an increase in capacity, but a transformation in lifespan.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                                <div class="text-3xl font-bold text-amber-600 mb-1">4000+</div>
+                                <div class="text-sm text-stone-600 font-medium">Cycle Counts</div>
+                            </div>
+                            <div class="p-4 bg-stone-100 rounded-xl border border-stone-200">
+                                <div class="text-3xl font-bold text-stone-800 mb-1">10 Years+</div>
+                                <div class="text-sm text-stone-600 font-medium">Service Life</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-stone-600">
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Extreme thermal stability and safety</li>
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Designed for long-cycle energy storage systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="smart-control" class="bg-stone-100 py-20 px-4 rounded-3xl mx-4 lg:mx-12">
+            <div class="max-w-4xl mx-auto text-center space-y-4 mb-12">
+                <h2 class="text-3xl font-bold text-stone-900">Flexible Input Power Management</h2>
+                <p class="text-stone-600 max-w-2xl mx-auto">
+                    The Energipak 3840 gives you complete control over charging speed. Use the interactive slider below to experience the benefits of adjusting the input power from 300W to 1500W. In non-emergency situations, sensible power management is key to extending the life of your lithium battery product.
+                </p>
+            </div>
+
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-stone-200">
+                <div class="flex flex-col items-center space-y-8">
+                    
+                    <div class="w-full relative pt-6 pb-2">
+                        <input type="range" min="300" max="1500" value="300" step="100" id="powerSlider" class="w-full h-3 bg-stone-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        <div class="flex justify-between text-xs text-stone-400 mt-2 font-mono">
+                            <span>300W</span>
+                            <span>900W</span>
+                            <span>1500W</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                        <div class="text-center p-4 rounded-xl transition-colors duration-300" id="modeCardLow">
+                            <div class="text-2xl mb-2">🛡️</div>
+                            <h4 class="font-bold text-stone-800">Preservation Mode</h4>
+                            <p class="text-sm text-stone-500 mt-1">Extends battery lifespan</p>
+                        </div>
+                        <div class="text-center p-4 bg-stone-50 rounded-xl border-2 border-amber-500 transform scale-105 shadow-md">
+                            <div class="text-xs text-stone-400 uppercase tracking-wider mb-1">Current Input Setting</div>
+                            <div class="text-4xl font-bold text-amber-600 font-mono" id="currentWatts">300 W</div>
+                        </div>
+                        <div class="text-center p-4 rounded-xl transition-colors duration-300" id="modeCardHigh">
+                            <div class="text-2xl mb-2">⚡</div>
+                            <h4 class="font-bold text-stone-800">Max Speed Mode</h4>
+                            <p class="text-sm text-stone-500 mt-1">For emergency situations</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-stone-50 w-full p-4 rounded-lg border border-stone-200 text-left">
+                        <h5 class="font-bold text-stone-700 text-sm mb-2">System Feedback:</h5>
+                        <p id="sliderFeedback" class="text-stone-600 text-sm">
+                            Currently in low-power Preservation Mode (300W-800W). Charging is slower, but this significantly reduces battery heat, which is the best way to extend the battery lifespan to over 10 years.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ups-power" class="px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div class="space-y-6">
+                        <h2 class="text-3xl font-bold text-stone-900">0.01s UPS-Grade Response</h2>
+                        <p class="text-stone-600">
+                            The Energipak 3840 is more than just a portable charger; it's a guardian for your sensitive equipment. This module demonstrates its powerful connectivity and Uninterruptible Power Supply (UPS) function.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-5 bg-white border border-stone-200 rounded-xl hover:border-amber-400 transition cursor-default">
+                                <div class="font-bold text-stone-900 text-lg mb-1">10+ Output Ports</div>
+                                <p class="text-sm text-stone-500">Simultaneously power multiple devices without waiting.</p>
+                            </div>
+                            <div class="p-5 bg-white border border-stone-200 rounded-xl hover:border-amber-400 transition cursor-default">
+                                <div class="font-bold text-stone-900 text-lg mb-1">< 0.01 Seconds</div>
+                                <p class="text-sm text-stone-500">Ultra-fast switch to backup power; prevents computer/server shutdown.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-stone-900 text-white p-6 rounded-xl relative overflow-hidden group cursor-pointer" id="upsDemoBtn">
+                            <div class="relative z-10 flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-bold text-lg">Click to Test UPS Switchover</h4>
+                                    <p class="text-stone-400 text-sm mt-1" id="upsStatusText">Status: Grid Power Normal</p>
+                                </div>
+                                <div class="text-4xl" id="upsIcon">🔌</div>
+                            </div>
+                            <div class="absolute inset-0 bg-green-600 opacity-20" id="upsBg"></div>
+                        </div>
+                        <p class="text-xs text-stone-400 italic">Click the black card above to simulate a power outage.</p>
+                    </div>
+
+                    <div class="bg-white p-1 rounded-2xl shadow-xl border border-stone-100 flex flex-col justify-center items-center">
+                        <div class="w-full p-6">
+                             <h3 class="font-bold text-center mb-6 text-stone-700">Port Configuration Overview</h3>
+                             <div class="grid grid-cols-2 gap-4 text-center">
+                                 <div class="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-lg">
+                                     <span class="text-2xl mb-2">💻</span>
+                                     <span class="font-bold text-sm">AC Output</span>
+                                     <span class="text-xs text-stone-400">High-power appliances</span>
+                                 </div>
+                                 <div class="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-lg">
+                                     <span class="text-2xl mb-2">📱</span>
+                                     <span class="font-bold text-sm">USB-C PD</span>
+                                     <span class="text-xs text-stone-400">Digital fast charging</span>
+                                 </div>
+                                 <div class="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-lg">
+                                     <span class="text-2xl mb-2">🚗</span>
+                                     <span class="font-bold text-sm">Car Charging Output</span>
+                                     <span class="text-xs text-stone-400">Vehicle devices</span>
+                                 </div>
+                                 <div class="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-lg">
+                                     <span class="text-2xl mb-2">🔌</span>
+                                     <span class="font-bold text-sm">DC Output</span>
+                                     <span class="text-xs text-stone-400">Routers/Lighting</span>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scenarios" class="bg-white py-20 px-4 border-t border-stone-100">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">All-Scenario Energy Solution</h2>
+                    <p class="text-stone-600 max-w-2xl mx-auto">
+                        The Energipak 3840 is designed for diverse power shortage scenarios. Whether building an off-grid solar power generation system or serving as a home emergency backup, it performs perfectly.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Scenario 1 -->
+                    <div class="group relative overflow-hidden rounded-2xl bg-stone-50 border border-stone-200 hover:shadow-lg transition-all duration-300">
+                        <div class="h-40 bg-amber-100 flex items-center justify-center text-6xl">🏕️</div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-900 mb-2">Outdoor Exploration</h3>
+                            <p class="text-stone-600 text-sm mb-4">The best companion for road trips and camping. Supports solar panel input to build a clean energy loop with infinite endurance in the wild.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Road Trips</span>
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Camping</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2 -->
+                    <div class="group relative overflow-hidden rounded-2xl bg-stone-50 border border-stone-200 hover:shadow-lg transition-all duration-300">
+                        <div class="h-40 bg-blue-50 flex items-center justify-center text-6xl">👷</div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-900 mb-2">Professional Work</h3>
+                            <p class="text-stone-600 text-sm mb-4">Provides powerful energy for outdoor construction. High-capacity battery ensures long running times for power tools.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Outdoor Construction</span>
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Emergency Rescue</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 3 -->
+                    <div class="group relative overflow-hidden rounded-2xl bg-stone-50 border border-stone-200 hover:shadow-lg transition-all duration-300">
+                        <div class="h-40 bg-green-50 flex items-center justify-center text-6xl">🏠</div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-900 mb-2">Home Backup</h3>
+                            <p class="text-stone-600 text-sm mb-4">A reliable solution for sudden power outages. Combined with solar panels, it creates a home micro-storage system for peak shaving and green power.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Home Emergency</span>
+                                <span class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">Off-Grid Power</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 p-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-amber-900 mb-2">☀️ Solar Power Generation + Storage System</h3>
+                        <p class="text-amber-800 text-sm max-w-lg">
+                            The Energipak 3840 is central to building a green energy ecosystem. Connect solar panels to absorb light energy by day and release power at night, achieving true energy independence.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 text-amber-600 text-2xl font-bold">
+                        <span>☀️</span>
+                        <span class="text-stone-400 text-sm">>>></span>
+                        <span>🔋</span>
+                        <span class="text-stone-400 text-sm">>>></span>
+                        <span>💡</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-12 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h4 class="text-white font-bold text-xl mb-4">Energipak 3840</h4>
+            <p class="text-sm mb-8">Safe, efficient, long-lasting next-generation energy storage solution.</p>
+            <div class="text-xs text-stone-600 border-t border-stone-800 pt-8">
+                &copy; 2023 Energipak Data Visualization Demo. Generated based on provided report.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data Store
+        const appData = {
+            batteryLife: {
+                labels: ['Conventional Lithium', 'Energipak (EVE LFP)'],
+                data: [800, 4000],
+                colors: ['#d6d3d1', '#d97706'] // stone-300, amber-600
+            },
+            sliderMessages: {
+                low: "Currently in low-power Preservation Mode (300W-800W). Charging is slower, but this significantly reduces battery heat, which is the best way to extend the battery lifespan to over 10 years.",
+                mid: "Currently in Balanced Mode (800W-1200W). This achieves a good balance between charging speed and battery health, suitable for most daily use scenarios.",
+                high: "Currently in Max Speed Charging Mode (1200W-1500W). Suitable for emergencies requiring quick power replenishment, recommended for use only when necessary to protect battery health."
+            }
+        };
+
+        // Initialize Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('batteryChart').getContext('2d');
+            
+            Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+            Chart.defaults.color = '#78716c';
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: appData.batteryLife.labels,
+                    datasets: [{
+                        label: 'Cycle Life (Cycles)',
+                        data: appData.batteryLife.data,
+                        backgroundColor: appData.batteryLife.colors,
+                        borderRadius: 8,
+                        barPercentage: 0.6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    if (context.parsed.y >= 4000) {
+                                        return "Can be used for over 10 years";
+                                    }
+                                    return "Approx. 2-3 years of service life";
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f5f5f4' },
+                            title: { display: true, text: 'Charge/Discharge Cycle Counts' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            initSlider();
+            initUPSDemo();
+        });
+
+        // Slider Interaction Logic
+        function initSlider() {
+            const slider = document.getElementById('powerSlider');
+            const display = document.getElementById('currentWatts');
+            const feedback = document.getElementById('sliderFeedback');
+            const cardLow = document.getElementById('modeCardLow');
+            const cardHigh = document.getElementById('modeCardHigh');
+
+            function updateUI(val) {
+                display.textContent = val + " W";
+                
+                // Reset card styles
+                cardLow.className = "text-center p-4 rounded-xl transition-colors duration-300";
+                cardHigh.className = "text-center p-4 rounded-xl transition-colors duration-300";
+
+                if (val <= 800) {
+                    feedback.textContent = appData.sliderMessages.low;
+                    cardLow.className += " bg-green-50 border border-green-200 text-green-800";
+                } else if (val > 800 && val <= 1200) {
+                    feedback.textContent = appData.sliderMessages.mid;
+                } else {
+                    feedback.textContent = appData.sliderMessages.high;
+                    cardHigh.className += " bg-red-50 border border-red-200 text-red-800";
+                }
+            }
+
+            slider.addEventListener('input', (e) => updateUI(e.target.value));
+            // Init
+            updateUI(300);
+        }
+
+        // UPS Demo Logic
+        function initUPSDemo() {
+            const btn = document.getElementById('upsDemoBtn');
+            const statusText = document.getElementById('upsStatusText');
+            const bg = document.getElementById('upsBg');
+            const icon = document.getElementById('upsIcon');
+            
+            let isGridPower = true;
+
+            btn.addEventListener('click', () => {
+                // Simulate Power Cut
+                isGridPower = !isGridPower;
+                
+                if (!isGridPower) {
+                    // Power Cut State
+                    statusText.textContent = "⚠️ Grid Power Interrupted! UPS Engaged (0.01s)";
+                    statusText.classList.add('text-amber-300');
+                    bg.className = "absolute inset-0 bg-amber-600 opacity-20";
+                    icon.textContent = "🔋"; // Battery Icon
+                    
+                    // Animate a quick flash to show switchover
+                    btn.classList.add('ring-4', 'ring-amber-500');
+                    setTimeout(() => btn.classList.remove('ring-4', 'ring-amber-500'), 200);
+
+                } else {
+                    // Normal State
+                    statusText.textContent = "Status: Grid Power Normal";
+                    statusText.classList.remove('text-amber-300');
+                    bg.className = "absolute inset-0 bg-green-600 opacity-20";
+                    icon.textContent = "🔌"; // Plug Icon
+                }
+            });
+        }
+        
+        // Simple Scroll to Top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
